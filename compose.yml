@@ -1,0 +1,25 @@
+services:
+  web:
+    container_name: baby-tools-shop
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: baby-tools-shop:${APP_VERSION:-latest}
+    env_file:
+      - .env
+    environment:
+      # These values override local .env defaults for the container runtime.
+      DJANGO_DEBUG: "False"
+      DJANGO_CSRF_TRUSTED_ORIGINS: http://localhost:8025,http://127.0.0.1:8025
+      SQLITE_PATH: /data/db.sqlite3
+    ports:
+      # Publish the Django/Gunicorn application on the required host port.
+      - "8025:8025"
+    volumes:
+      # Persist the SQLite database outside the container filesystem.
+      - baby_tools_shop_data:/data
+    # Keep the application running on a VPS unless it is stopped manually.
+    restart: unless-stopped
+
+volumes:
+  baby_tools_shop_data:
