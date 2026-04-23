@@ -1,8 +1,8 @@
 # Baby Tools Shop
 
-Use this guide to run the Baby Tools Shop Django application locally and deploy it with Docker on a V-Server.
+This repository contains a Django-based shop application with a Docker setup for local testing and VPS deployment.
 
-This repository contains the Django source code, Docker setup, environment templates, and project documentation for a small shop application that must be reachable on port `8025`.
+The application is designed to run in a containerized environment and to be reachable on port `8025`.
 
 ## Table of Contents
 
@@ -12,7 +12,6 @@ This repository contains the Django source code, Docker setup, environment templ
 - [4. Configuration](#4-configuration)
 - [5. Security Notes](#5-security-notes)
 - [6. Validation](#6-validation)
-- [7. Submission Notes](#7-submission-notes)
 
 ---
 
@@ -40,34 +39,41 @@ baby-tools-shop/
 
 Purpose of the repository:
 
-- run the Django shop locally
-- containerize it with Docker
+- run the shop with Docker
 - keep configuration outside the codebase
-- deploy it to a VPS on port `8025`
+- persist database and uploaded media files
+- deploy the application to a VPS on port `8025`
 
 ---
 
 ## 2. Quickstart
 
-Create a local environment file:
+Clone the repository and enter the project folder.
+
+```bash
+git clone git@github.com:PhilippKlinger/baby-tools-shop.git
+cd baby-tools-shop
+```
+
+Create a local environment file.
 
 ```bash
 cp .env.example .env
 ```
 
-Build the Docker image:
+Build the image.
 
 ```bash
 docker compose build
 ```
 
-Generate a Django secret key with the container:
+Generate a Django secret key with the container.
 
 ```bash
 docker compose run --rm web python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
 ```
 
-Open `.env` and set at least:
+Open `.env` and set at least the following values:
 
 ```text
 DJANGO_SECRET_KEY=<generated-secret-key>
@@ -76,86 +82,57 @@ DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
 DJANGO_CSRF_TRUSTED_ORIGINS=http://localhost:8025,http://127.0.0.1:8025
 ```
 
-Start the application:
+Start the application.
 
 ```bash
-docker compose up --build
+docker compose up --build -d
 ```
 
-Open the shop:
+Create an admin user.
+
+```bash
+docker compose exec web python manage.py createsuperuser
+```
+
+Open the application:
 
 ```text
 http://localhost:8025
+```
+
+Open the admin panel:
+
+```text
+http://localhost:8025/admin/
 ```
 
 ---
 
 ## 3. Usage
 
-### Local Django Development
+### Local Docker Usage
 
-Create and activate a virtual environment:
+Use Docker Desktop or Docker Engine to run the project locally.
 
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-```
-
-Install dependencies:
-
-```bash
-python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
-```
-
-Start Django locally:
-
-```bash
-cd babyshop_app
-python manage.py migrate
-python manage.py runserver
-```
-
-Open:
-
-```text
-http://127.0.0.1:8000
-http://127.0.0.1:8000/admin/
-```
-
-Create an admin user if needed:
-
-```bash
-python manage.py createsuperuser
-```
-
-### Docker Compose
-
-Create `.env` from the template:
-
-```bash
-cp .env.example .env
-```
-
-Build and start the container:
+Start the stack:
 
 ```bash
 docker compose up --build -d
 ```
 
-Stop it again:
+Stop the stack:
 
 ```bash
 docker compose down
 ```
 
-Create an admin user inside the running container:
+Do not use the following command if you want to keep the database and uploaded files:
 
 ```bash
-docker compose exec web python manage.py createsuperuser
+docker compose down -v
 ```
 
-The application is available at:
+The local shop is available at:
 
 ```text
 http://localhost:8025
@@ -163,9 +140,32 @@ http://localhost:8025
 
 ### VPS Deployment
 
-Clone the repository on the VPS, create `.env`, generate a secret key, and start the stack with Docker Compose.
+Clone the repository on the VPS and enter the project folder.
 
-For a VPS deployment, set the server-specific values in `.env`:
+```bash
+git clone git@github.com:PhilippKlinger/baby-tools-shop.git
+cd baby-tools-shop
+```
+
+Create `.env` from the template:
+
+```bash
+cp .env.example .env
+```
+
+Build the image:
+
+```bash
+docker compose build
+```
+
+Generate a secret key:
+
+```bash
+docker compose run --rm web python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+```
+
+Set the VPS-specific values in `.env`:
 
 ```text
 DJANGO_SECRET_KEY=<generated-secret-key>
@@ -174,31 +174,36 @@ DJANGO_ALLOWED_HOSTS=<server-ip>
 DJANGO_CSRF_TRUSTED_ORIGINS=http://<server-ip>:8025
 ```
 
-Then start the service:
+Start the application:
 
 ```bash
 docker compose up --build -d
 ```
 
-Open:
+Create an admin user:
+
+```bash
+docker compose exec web python manage.py createsuperuser
+```
+
+Open the shop:
 
 ```text
 http://<server-ip>:8025
 ```
 
-### Application Data
+### Shop Content
 
-The repository does not include ready-made shop content.
+The repository does not include prepared shop content.
 
-To show products in the shop:
+To make products visible in the shop:
 
-1. Create a superuser.
-2. Open the admin panel.
-3. Create categories.
-4. Upload product images.
-5. Create products and assign them to categories.
+1. Open the admin panel.
+2. Create categories.
+3. Upload product images.
+4. Create products and assign them to categories.
 
-The Docker setup stores the SQLite database and uploaded media files in a persistent volume, so the data remains available after a normal container restart.
+The Docker setup persists the SQLite database and uploaded media files in a Docker volume. A normal container restart keeps the data.
 
 ---
 
@@ -206,39 +211,24 @@ The Docker setup stores the SQLite database and uploaded media files in a persis
 
 The project uses environment variables for configuration.
 
-Relevant variables:
-
 | Variable | Description |
 | --- | --- |
 | `DJANGO_SECRET_KEY` | Django secret key for the deployment. |
-| `DJANGO_DEBUG` | Use `True` for local debugging, `False` for the final deployment. |
+| `DJANGO_DEBUG` | Use `False` for the final Docker and VPS setup. |
 | `DJANGO_ALLOWED_HOSTS` | Comma-separated allowed hosts. |
 | `DJANGO_CSRF_TRUSTED_ORIGINS` | Trusted origins including scheme and port. |
 | `SQLITE_PATH` | SQLite database path. |
 | `MEDIA_ROOT` | Upload directory for media files. |
-| `DJANGO_SERVE_MEDIA` | Enables Django media serving for this container-based setup. |
+| `DJANGO_SERVE_MEDIA` | Enables Django media serving in this container-based setup. |
 
-Local development values can point to the project folders:
-
-```text
-SQLITE_PATH=babyshop_app/db.sqlite3
-MEDIA_ROOT=babyshop_app/media
-```
-
-Docker Compose overrides runtime paths for the container:
+The container runtime stores persistent data under:
 
 ```text
-SQLITE_PATH=/data/db.sqlite3
-MEDIA_ROOT=/data/media
+/data/db.sqlite3
+/data/media
 ```
 
-The Compose file also uses:
-
-```text
-${APP_VERSION:-latest}
-```
-
-This keeps the image tag configurable while providing a sensible default.
+This data is mounted from a Docker volume and remains available after a normal restart.
 
 ---
 
@@ -258,16 +248,8 @@ This keeps the image tag configurable while providing a sensible default.
 Local validation:
 
 ```bash
-cd babyshop_app
-python manage.py check
-python manage.py migrate
-python manage.py runserver
-```
-
-Docker validation:
-
-```bash
-docker compose up --build
+docker compose up --build -d
+docker compose exec web python manage.py createsuperuser
 ```
 
 Check:
@@ -287,16 +269,3 @@ VPS validation:
 docker compose down
 docker compose up -d
 ```
-
-Do not use `docker compose down -v` if you want to keep the database and uploaded files.
-
----
-
-## 7. Submission Notes
-
-The final submission should include:
-
-- repository link
-- pull request link
-- a short Loom video
-- the deployed application URL on port `8025`
