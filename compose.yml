@@ -13,6 +13,7 @@ services:
       DJANGO_CSRF_TRUSTED_ORIGINS: http://localhost:8025,http://127.0.0.1:8025
       SQLITE_PATH: /data/db.sqlite3
       MEDIA_ROOT: /data/media
+      DJANGO_SERVE_MEDIA: "True"
     ports:
       # Publish the Django/Gunicorn application on the required host port.
       - "8025:8025"
