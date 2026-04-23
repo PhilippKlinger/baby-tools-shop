@@ -6,47 +6,15 @@ The application is designed to run in a containerized environment and to be reac
 
 ## Table of Contents
 
-- [1. Repository Overview](#1-repository-overview)
-- [2. Quickstart](#2-quickstart)
-- [3. Usage](#3-usage)
-- [4. Configuration](#4-configuration)
-- [5. Security Notes](#5-security-notes)
-- [6. Validation](#6-validation)
+- [1. Quickstart](#1-quickstart)
+- [2. Usage](#2-usage)
+- [3. Configuration](#3-configuration)
+- [4. Security Notes](#4-security-notes)
+- [5. Validation](#5-validation)
 
 ---
 
-## 1. Repository Overview
-
-The most relevant files and folders are:
-
-```text
-baby-tools-shop/
-├── .dockerignore
-├── .env.example
-├── .gitignore
-├── compose.yml
-├── Dockerfile
-├── README.md
-├── requirements.txt
-├── babyshop_app/
-│   ├── manage.py
-│   ├── babyshop/
-│   ├── products/
-│   ├── users/
-│   └── templates/
-└── project_images/
-```
-
-Purpose of the repository:
-
-- run the shop with Docker
-- keep configuration outside the codebase
-- persist database and uploaded media files
-- deploy the application to a VPS on port `8025`
-
----
-
-## 2. Quickstart
+## 1. Quickstart
 
 Clone the repository and enter the project folder.
 
@@ -108,7 +76,7 @@ http://localhost:8025/admin/
 
 ---
 
-## 3. Usage
+## 2. Usage
 
 ### Local Docker Usage
 
@@ -207,7 +175,7 @@ The Docker setup persists the SQLite database and uploaded media files in a Dock
 
 ---
 
-## 4. Configuration
+## 3. Configuration
 
 The project uses environment variables for configuration.
 
@@ -232,7 +200,7 @@ This data is mounted from a Docker volume and remains available after a normal r
 
 ---
 
-## 5. Security Notes
+## 4. Security Notes
 
 - Do not commit real `.env` files.
 - Do not store SSH keys, passwords, tokens, usernames, or server IP addresses in the repository.
@@ -243,7 +211,7 @@ This data is mounted from a Docker volume and remains available after a normal r
 
 ---
 
-## 6. Validation
+## 5. Validation
 
 Local validation:
 
