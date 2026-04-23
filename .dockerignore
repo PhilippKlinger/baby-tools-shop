@@ -1,4 +1,5 @@
 .git
+.gitignore
 .venv
 __pycache__
 *.pyc
@@ -7,8 +8,12 @@ __pycache__
 .env
 db.sqlite3
 db.sqlite3-journal
+babyshop_app/db.sqlite3
+babyshop_app/db.sqlite3-journal
 media
+babyshop_app/media
 staticfiles
+babyshop_app/staticfiles
 .pytest_cache
 .mypy_cache
 .coverage
