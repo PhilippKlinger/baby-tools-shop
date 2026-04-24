@@ -1,0 +1,20 @@
+services:
+  web:
+    container_name: baby-tools-shop
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: baby-tools-shop:${APP_VERSION:-latest}
+    env_file:
+      - .env
+    ports:
+      # Publish the Django/Gunicorn application on the required host port.
+      - "${HOST_PORT:-8025}:8025"
+    volumes:
+      # Persist the SQLite database outside the container filesystem.
+      - baby_tools_shop_data:/data
+    # Keep the application running on a VPS unless it is stopped manually.
+    restart: unless-stopped
+
+volumes:
+  baby_tools_shop_data:
