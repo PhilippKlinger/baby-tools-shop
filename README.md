@@ -2,7 +2,7 @@
 
 This repository contains a Django-based shop application with a Docker setup for local testing and VPS deployment.
 
-The application is designed to run in a containerized environment and to be reachable on port `8025`.
+The application is designed to run in a containerized environment and to be reachable on port `8025` by default.
 
 ## Table of Contents
 
@@ -41,14 +41,7 @@ Generate a Django secret key with the container.
 docker compose run --rm web python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
 ```
 
-Open `.env` and set at least the following values:
-
-```text
-DJANGO_SECRET_KEY=<generated-secret-key>
-DJANGO_DEBUG=False
-DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
-DJANGO_CSRF_TRUSTED_ORIGINS=http://localhost:8025,http://127.0.0.1:8025
-```
+Open `.env`, set `DJANGO_SECRET_KEY`, and review the values listed in the [Configuration](#3-configuration) section.
 
 Start the application.
 
@@ -65,13 +58,13 @@ docker compose exec web python manage.py createsuperuser
 Open the application:
 
 ```text
-http://localhost:8025
+http://localhost:${HOST_PORT}
 ```
 
 Open the admin panel:
 
 ```text
-http://localhost:8025/admin/
+http://localhost:${HOST_PORT}/admin/
 ```
 
 ---
@@ -103,7 +96,7 @@ docker compose down -v
 The local shop is available at:
 
 ```text
-http://localhost:8025
+http://localhost:${HOST_PORT}
 ```
 
 ### VPS Deployment
@@ -133,14 +126,7 @@ Generate a secret key:
 docker compose run --rm web python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
 ```
 
-Set the VPS-specific values in `.env`:
-
-```text
-DJANGO_SECRET_KEY=<generated-secret-key>
-DJANGO_DEBUG=False
-DJANGO_ALLOWED_HOSTS=<server-ip>
-DJANGO_CSRF_TRUSTED_ORIGINS=http://<server-ip>:8025
-```
+Update `.env` with a generated `DJANGO_SECRET_KEY` and the deployment-specific values described in the [Configuration](#3-configuration) section.
 
 Start the application:
 
@@ -177,17 +163,18 @@ The Docker setup persists the SQLite database and uploaded media files in a Dock
 
 ## 3. Configuration
 
-The project uses environment variables for configuration.
+Copy `.env.example` to `.env` and adjust the values below for your target environment.
 
-| Variable | Description |
-| --- | --- |
-| `DJANGO_SECRET_KEY` | Django secret key for the deployment. |
-| `DJANGO_DEBUG` | Use `False` for the final Docker and VPS setup. |
-| `DJANGO_ALLOWED_HOSTS` | Comma-separated allowed hosts. |
-| `DJANGO_CSRF_TRUSTED_ORIGINS` | Trusted origins including scheme and port. |
-| `SQLITE_PATH` | SQLite database path. |
-| `MEDIA_ROOT` | Upload directory for media files. |
-| `DJANGO_SERVE_MEDIA` | Enables Django media serving in this container-based setup. |
+| Variable | Purpose | Default Value |
+| --- | --- | --- |
+| `HOST_PORT` | Published host port for Docker Compose. The container still listens on port `8025`. | `8025` |
+| `DJANGO_SECRET_KEY` | Secret key for Django. Replace this placeholder before starting the application. | `replace-this-with-a-generated-secret-key` |
+| `DJANGO_DEBUG` | Django debug mode. Keep this `False` for the final Docker and VPS setup. | `False` |
+| `DJANGO_ALLOWED_HOSTS` | Comma-separated hosts that Django accepts. Change this for your VPS domain or IP. | `localhost,127.0.0.1` |
+| `DJANGO_CSRF_TRUSTED_ORIGINS` | Trusted origins including scheme and port. Update this when the host, domain, or port changes. | `http://localhost:8025,http://127.0.0.1:8025` |
+| `SQLITE_PATH` | SQLite database file used by the container runtime. Keep this on the mounted `/data` volume for persistence. | `/data/db.sqlite3` |
+| `MEDIA_ROOT` | Directory for uploaded media files. Keep this on the mounted `/data` volume for persistence. | `/data/media` |
+| `DJANGO_SERVE_MEDIA` | Enables Django media serving for this container-based setup. | `True` |
 
 The container runtime stores persistent data under:
 
@@ -222,14 +209,14 @@ docker compose exec web python manage.py createsuperuser
 
 Check:
 
-- the shop opens in the browser
-- the admin panel opens
+- the shop opens in the browser on `http://localhost:${HOST_PORT}`
+- the admin panel opens on `http://localhost:${HOST_PORT}/admin/`
 - static files are loaded
 - uploaded media files are displayed
 
 VPS validation:
 
-- the application is reachable at `http://<server-ip>:8025`
+- the application is reachable at `http://<server-ip>:8025` or `http://<server-ip>:${HOST_PORT}` if you changed the host port
 - the admin panel works
 - product data remains available after:
 
