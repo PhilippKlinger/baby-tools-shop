@@ -6,15 +6,15 @@ The application is designed to run in a containerized environment and to be reac
 
 ## Table of Contents
 
-- [1. Quickstart](#1-quickstart)
-- [2. Usage](#2-usage)
-- [3. Configuration](#3-configuration)
-- [4. Security Notes](#4-security-notes)
-- [5. Validation](#5-validation)
+- [Quickstart](#1-quickstart)
+- [Usage](#2-usage)
+- [Configuration](#3-configuration)
+- [Security Notes](#4-security-notes)
+- [Validation](#5-validation)
 
 ---
 
-## 1. Quickstart
+## Quickstart
 
 Clone the repository and enter the project folder.
 
@@ -69,7 +69,7 @@ http://localhost:${HOST_PORT}/admin/
 
 ---
 
-## 2. Usage
+## Usage
 
 ### Local Docker Usage
 
@@ -161,7 +161,7 @@ The Docker setup persists the SQLite database and uploaded media files in a Dock
 
 ---
 
-## 3. Configuration
+## Configuration
 
 Copy `.env.example` to `.env` and adjust the values below for your target environment.
 
@@ -187,7 +187,7 @@ This data is mounted from a Docker volume and remains available after a normal r
 
 ---
 
-## 4. Security Notes
+## Security Notes
 
 - Do not commit real `.env` files.
 - Do not store SSH keys, passwords, tokens, usernames, or server IP addresses in the repository.
@@ -198,7 +198,7 @@ This data is mounted from a Docker volume and remains available after a normal r
 
 ---
 
-## 5. Validation
+## Validation
 
 Local validation:
 
